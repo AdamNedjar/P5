@@ -74,7 +74,7 @@ console.log(data)
        
        const popupConfirmation = () => {
        
-       if (confirm("L'article à bien été ajouté au panier 🛒, consultez le panier 🆗 ou revenir à la page d'accueil ❌")) {
+       if (confirm("L'article à été ajouté au panier, consultez le panier 🆗 ou revenir à la page d'accueil ❌")) {
          window.location.href = "cart.html";
        }
        
@@ -100,7 +100,7 @@ console.log(data)
            popupConfirmation();
            return;
          } else {
-           alert("⚠️ La quantité totale dépasse 100 ⚠️");
+           alert(" La quantité totale dépasse 100 ");
            return;
          }
        }
