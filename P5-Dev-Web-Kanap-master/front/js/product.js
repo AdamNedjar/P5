@@ -4,28 +4,40 @@ const id = params.get("id")
 const url = `http://localhost:3000/api/products/${id}`
 console.log(url)
 
-const getArticle = () => {
-    fetch(url)
-    .then(function(res) {
-        return res.json()
-    })
-    .then(function(data) {
-       console.log(data)
-    const ajoutTitre = (document.getElementById("title").innerHTML= data.name)
+const getArticle = async () => {
+   const urlParams = new URLSearchParams(window.location.search);
+   const id = parseInt(urlParams.get("id")); // Obtient l'ID à partir de l'URL
+ 
+   if (isNaN(id)) {
+     // Si l'ID n'est pas un nombre, redirigez vers la page d'accueil
+     window.location.href = "index.html";
+     return;
+
+   }
+const response = await fetch(url);
+
+if(response.status !== 200) {
+   window.location.href = "index.html";
+   return;
+}
+
+const data = await response.json()
+
+const ajoutTitre = (document.getElementById("title").innerHTML= data.name)
     const ajoutPrix = (document.getElementById("price").innerHTML= data.price)
     const ajoutImage = document.createElement("img")
     document.querySelector(".item__img").appendChild(ajoutImage)
     ajoutImage.setAttribute("src", `${data.imageUrl}`)
+
 
     const ajoutDescription = (document.getElementById("description").innerHTML = data.description)
     const ajoutOption = document.getElementById("colors")
     for (color in data.colors) {
         ajoutOption.innerHTML += `<option value="${data.colors[color]}">${data.colors[color]}</option>`
     }
-
-   }
-)}
-
+console.log(data)
+  
+}
    const button = document.querySelector("#addToCart");
    button.addEventListener('click', ajouterAuxPanier);
 
@@ -33,32 +45,21 @@ const getArticle = () => {
      
      e.preventDefault();
 
-     const urlParams = new URLSearchParams(window.location.search);
-     const id = parseInt(urlParams.get("id")); // Obtenez l'ID à partir de l'URL
-   
-     if (isNaN(id)) {
-       // Si l'ID n'est pas un nombre, redirigez vers la page d'accueil
-       window.location.href = "index.html";
-       return;
-
-     }
-
-     
      let colors = document.querySelector('#colors').value;
      let quantity = document.querySelector('#quantity').value;
      
      
      if(colors == ''){
-           alert('⚠️Veuillez sélectionner une couleur⚠️');
+           alert('Veuillez sélectionner une couleur');
            return;
        }
 
        else if (quantity<1 || quantity>100){
-           alert('⚠️Vous pouvez seulement sélectionner 1 à 100 produits⚠️');
+           alert('Vous pouvez seulement sélectionner 1 à 100 produits');
            return;
        }
        
-         alert(`✅ Votre article a bien été ajouté au panier ✅`);   
+         alert(` Votre article a bien été ajouté au panier `);   
        
        
        const optionProduct = { 
