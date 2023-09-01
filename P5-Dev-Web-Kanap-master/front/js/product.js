@@ -23,14 +23,16 @@ if(response.status !== 200) {
 
 const data = await response.json()
 
-const ajoutTitre = (document.getElementById("title").innerHTML= data.name)
-    const ajoutPrix = (document.getElementById("price").innerHTML= data.price)
+
+    document.getElementById("title").innerHTML= data.name
+    document.getElementById("price").innerHTML= data.price
     const ajoutImage = document.createElement("img")
-    document.querySelector(".item__img").appendChild(ajoutImage)
     ajoutImage.setAttribute("src", `${data.imageUrl}`)
+    ajoutImage.setAttribute("alt", `${data.altTxt}`)
+    ajoutImage.setAttribute("id", "image")
+    document.querySelector(".item__img").appendChild(ajoutImage).setAttribute
 
-
-    const ajoutDescription = (document.getElementById("description").innerHTML = data.description)
+    document.getElementById("description").innerHTML = data.description
     const ajoutOption = document.getElementById("colors")
     for (color in data.colors) {
         ajoutOption.innerHTML += `<option value="${data.colors[color]}">${data.colors[color]}</option>`
@@ -47,7 +49,11 @@ console.log(data)
 
      let colors = document.querySelector('#colors').value;
      let quantity = document.querySelector('#quantity').value;
-     
+     let title = document.getElementById('title').innerHTML;
+     let price = document.getElementById('price').innerHTML;
+     let altTxt = document.getElementById("image").getAttribute('alt');
+     let imageUrl = document.getElementById("image").getAttribute('src');
+   
      
      if(colors == ''){
            alert('Veuillez sélectionner une couleur');
@@ -66,6 +72,10 @@ console.log(data)
          id: id,
          colors: colors,
          quantity: Number(quantity),
+         title : title,
+         price : Number(price),
+         altTxt : altTxt, 
+         imageUrl : imageUrl
        }
 
        
