@@ -38,7 +38,7 @@ function displayCart(product) {
   </div>
 </article>`
 }
-/*
+
 // Récupérez la liste des produits dans le panier depuis le stockage local
  localStorageProducts = JSON.parse(localStorage.getItem("produits")) || [];
 
@@ -115,7 +115,7 @@ document.querySelectorAll('.deleteItem').forEach(function(deleteButton) {
 
 // Initialisez l'affichage du panier lors du chargement de la page
 updateCartAndDisplay();
-*/
+
 
 
 
