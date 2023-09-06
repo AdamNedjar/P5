@@ -84,7 +84,7 @@ console.log(data)
        
        const popupConfirmation = () => {
        
-       if (confirm("L'article à été ajouté au panier, consultez le panier 🆗 ou revenir à la page d'accueil ❌")) {
+       if (confirm("L'article à été ajouté au panier, allez au panier 🆗 ou revenir à la page d'accueil ❌")) {
          window.location.href = "cart.html";
        }
        
@@ -130,6 +130,12 @@ console.log(data)
  
 
 getArticle()
+
+
+
+
+
+
 
 
 
