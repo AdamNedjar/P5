@@ -12,7 +12,7 @@ let localStorageProducts = JSON.parse(localStorage.getItem("produits")) || [];
   }
 
 function displayCart(product) {
-  const indexProduct = localStorageProducts.indexOf(product);
+ /* const indexProduct = localStorageProducts.indexOf(product);*/
   const productList = document.getElementById("cart__items");
   
     productList.innerHTML += `
@@ -69,12 +69,26 @@ function modifValue() {
   // Parcourez les éléments de quantité et ajoutez des écouteurs d'événements
   inputQuantity.forEach((input, i) => {
     input.addEventListener("change", () => {
+    // Récupérez la nouvelle quantité entrée par l'utilisateur
+    const newQuantity = parseInt(input.value);
+
+    // Vérifiez si la nouvelle quantité est valide (entre 1 et 100)
+    if (newQuantity >= 1 && newQuantity <= 100) {
       // Mettez à jour la quantité dans localStorage
       localStorageProducts[i].quantity = valueQuantity[i].value;
 
       // Mettez à jour le panier et les totaux sans recharger la page
       updateCart();
-    });
+       // Sauvegardez instantanément les données du panier dans le localStorage
+       saveCartData();
+    } else {
+      // Rétablissez la quantité précédente dans l'élément input
+      input.value = localStorageProducts[i].quantity;
+
+      // Affichez une alerte si la quantité n'est pas valide
+      alert("La quantité d'un produit doit être entre 1 et 100 !");
+    }
+   });
   });
 }
 
@@ -92,6 +106,10 @@ function deleteProduct(index) {
 
   // Mettez à jour le panier et les totaux sans recharger la page
   updateCart();
+
+  // Sauvegardez instantanément les données du panier dans le localStorage
+  saveCartData();
+
 }
 
 // Fonction de mise à jour du panier
@@ -115,24 +133,6 @@ function updateCart() {
   document.querySelector('.cart__price').innerHTML = `<p>Total (<span id="totalQuantity">${quantityTotalCalcul}</span> articles) : <span id="totalPrice">${priceTotalCalcul.toFixed(2)} €</span></p>`;
 }
 
-// Fonction de modification de la quantité des articles
-function modifValue() {
-  // Sélectionnez les éléments de quantité
-  let inputQuantity = Array.from(document.querySelectorAll(".cart__item__content__settings__quantity input"));
-  let valueQuantity = Array.from(document.querySelectorAll('.itemQuantity'));
-
-  // Parcourez les éléments de quantité et ajoutez des écouteurs d'événements
-  inputQuantity.forEach((input, i) => {
-    input.addEventListener("change", () => {
-      // Mettez à jour la quantité dans localStorage
-      localStorageProducts[i].quantity = valueQuantity[i].value;
-
-      // Mettez à jour le panier et les totaux sans recharger la page
-      updateCart();
-    });
-  });
-}
-
 // Pour chaque bouton de suppression, ajoutez un écouteur d'événements pour appeler la fonction de suppression
 document.querySelectorAll(".deleteItem").forEach((button, index) => {
   button.addEventListener("click", () => {
@@ -144,9 +144,12 @@ document.querySelectorAll(".deleteItem").forEach((button, index) => {
 updateCart();
 modifValue();
 
-
 // Fonction pour sauvegarder les données du panier dans le localStorage
 function saveCartData() {
+// Validez la quantité de chaque produit dans le panier
+for (let i = 0; i < localStorageProducts.length; i++) {
+  const quantity = localStorageProducts[i].quantity;
+}
   localStorage.setItem('produits', JSON.stringify(localStorageProducts));
 }
 
@@ -188,21 +191,16 @@ window.addEventListener('beforeunload', function () {
 });
 
 
-////// Formulaire ///////
+/////// Formulaire ///////
 
-localStorageProducts = JSON.parse(localStorage.getItem("produits")) || [];
-let products = [];
-// ...
-
-
-//Sélection du bouton commander :
+// Sélection du bouton commander :
 let btnSendForm = document.querySelector('#order');
 
-//Écoute du bouton commander sur le click pour pouvoir contrôler, valider et envoyer le formulaire et les produits au back-end :
+// Écoute du bouton commander sur le click pour pouvoir contrôler, valider et envoyer le formulaire et les produits au back-end :
 btnSendForm.addEventListener('click', (e) => {
   e.preventDefault();
 
-  //Récupération des valeurs du formulaire :
+  // Récupération des valeurs du formulaire :
   const contact = {
     firstName: document.querySelector("#firstName").value,
     lastName: document.querySelector("#lastName").value,
@@ -211,112 +209,119 @@ btnSendForm.addEventListener('click', (e) => {
     email: document.querySelector("#email").value,
   };
 
+  // Créez une variable pour stocker les messages d'erreur
+  let errorMessages = [];
 
-  function verifString(value, errorMsgItem, inputName) {     
-    //Regex pour le contrôle des champs Prénom : 
-    if (/^([A-Za-zÀ-ÖØ-öø-ÿ0-9\séè]{1,100})?([-]{0,1})?([A-Za-zÀ-ÖØ-öø-ÿ0-9\séè]{1,100})$/.test(value)) {
+  function verifString(value, inputName, errorMsgItem) {
+    if (/^([A-Za-zÀ-ÖØ-öø-ÿ\séè]{1,100})?([-]{0,1})?([A-Za-zÀ-ÖØ-öø-ÿ\séè]{1,100})$/.test(value)) {
       document.querySelector(errorMsgItem).textContent = "";
-      return true;
-    } 
-    else {
-      document.querySelector(errorMsgItem).textContent = `Le champ ${inputName} est invalide !` ;
-      return false;
+    } else {
+      const errorMsg = `Le champ ${inputName} est invalide !`;
+      document.querySelector(errorMsgItem).textContent = errorMsg;
+      errorMessages.push(errorMsg);
     }
   }
 
-
-  function verifPrenom() { 
-    return verifString(contact.firstName, "#firstNameErrorMsg", "prénom");   
-    //Regex pour le contrôle des champs Prénom :
-    /*const firstName = contact.firstName;  
-    let inputFirstName = document.querySelector("#firstName");
-    if (/^([A-Za-z\s]{1,100})?([-]{0,1})?([A-Za-z]{1,100})$/.test(firstName)) {
-      document.querySelector("#firstNameErrorMsg").textContent = "";
-      return true;
-    } 
-    else {
-      document.querySelector("#firstNameErrorMsg").textContent = "Le champ Prénom est invalide !";
-      return false;
-    }*/
+  function verifPrenom() {
+    verifString(contact.firstName, "Prénom", "#firstNameErrorMsg");
   }
 
-  function verifNom() {     
-    return verifString(contact.lastName, "#lastNameErrorMsg", "nom"); 
-    //Regex pour le contrôle des champs Nom :
-    /*const lastName = contact.lastName; 
-    let inputLastName = document.querySelector("#lastName"); 
-    if (/^([A-Za-z\s]{1,100})?([-]{0,1})?([A-Za-z]{1,100})$/.test(lastName)) {
-      document.querySelector("#lastNameErrorMsg").textContent = "";
-      return true;
-    } 
-    else {
-      document.querySelector("#lastNameErrorMsg").textContent = "Le champ Nom est invalide !";
-      return false;
-    }*/
+  function verifNom() {
+    verifString(contact.lastName, "Nom", "#lastNameErrorMsg");
   }
 
-  function verifAdresse() {     
-    return verifString(contact.address, "#addressErrorMsg", "adresse");
-    // Regex pour le contrôle des champs adresse :
-    /*const adresse = contact.address;  
-    let inputAddress = document.querySelector("#address");
-    if (/^([A-Za-zÀ-ÖØ-öø-ÿ0-9\séè]{1,100})?([-]{0,1})?([A-Za-zÀ-ÖØ-öø-ÿ0-9\séè]{1,100})$/.test(adresse)) {
+  function verifAdresse() {
+    const address = contact.address ;
+    if (/^([A-Za-zÀ-ÖØ-öø-ÿ0-9\séè]{1,100})?([-]{0,1})?([A-Za-zÀ-ÖØ-öø-ÿ0-9\séè]{1,100})$/.test(address)) {
       document.querySelector("#addressErrorMsg").textContent = "";
-      return true;
-    } 
-    else {
-      document.querySelector("#addressErrorMsg").textContent = "Le champ Adresse est invalide !";
-      return false;
-    }*/
+    } else {
+      document.querySelector("#addressErrorMsg").textContent = "Le champ address est invalide !";
+      errorMessages.push("Le champ address est invalide !");
+    }
   }
 
-  function verifVille() {     
-    return verifString(contact.city, "#cityErrorMsg", "ville"); 
-    //Regex pour le contrôle des champs Ville :
-    /*const city = contact.city;  
-    let inputCity = document.querySelector("#city");
-    if (/^([A-Za-z\s]{1,100})?([-]{0,1})?([A-Za-z]{1,100})$/.test(city)) {
-      document.querySelector("#cityErrorMsg").textContent = "";
-      return true;
-    } 
-    else {
-      document.querySelector("#cityErrorMsg").textContent = "Le champ Ville est invalide !";
-      return false;
-    }*/
+  function verifVille() {
+    verifString(contact.city, "Ville", "#cityErrorMsg");
   }
 
-  function verifEmail() {     
-    //Regex pour le contrôle des champs Email :
-    const email = contact.email;  
-    let inputMail = document.querySelector("#email");
+  function verifEmail() {
+    const email = contact.email;
     if (/^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/.test(email)) {
       document.querySelector("#emailErrorMsg").textContent = "";
-      return true;
-    } 
-    else {
+    } else {
       document.querySelector("#emailErrorMsg").textContent = "Le champ email est invalide !";
-      return false;
+      errorMessages.push("Le champ email est invalide !");
     }
   }
 
-  //Contrôle validité formulaire avant envoi dans le local storage : 
-  if (verifPrenom() && verifNom() && verifAdresse() && verifVille() && verifEmail()) {
-    //Mettre l'objet "contact" dans le local storage :
+  // Validez chaque champ du formulaire
+  verifPrenom();
+  verifNom();
+  verifAdresse();
+  verifVille();
+  verifEmail();
+
+  document.addEventListener('DOMContentLoaded', function () {
+   
+  // Affichez les messages d'erreur dans l'interface utilisateur
+  const errorMessagesContainer = document.querySelector("#errorMessages");
+  errorMessagesContainer.innerHTML = errorMessages.map(msg => `<p>${msg}</p>`).join('');
+});
+
+  // Contrôle de la validité du formulaire avant envoi au serveur :
+  if (errorMessages.length === 0) {
+    // Mettre l'objet "contact" dans le local storage :
     localStorage.setItem("contact", JSON.stringify(contact));
+    sendToServer()
+  }
 
- // Mettre à jour la variable "products" avec les données actuelles du panier
- products = localStorageProducts.map(item => {
-  return {
-    id: item.id,
-    quantity: item.quantity
-  };
-});
+    // Variable qui récupère l'orderId envoyé comme réponse par le serveur lors de la requête POST :
+    var orderId = "";
 
-    sendFromToServer(products);
-  } 
-  /*else {
-    alert("Veillez bien remplir le formulaire");
-  }*/
+    // je mets les valeurs du formulaire et les produits sélectionnés
+    // dans un objet
+    const sendFormData = {
+      contact,
+      products,
+    }
+console.log(sendFormData);
 
-});
+
+    // Envoyer la requête POST au back-end
+    function sendToServer() {
+      // Construire le tableau de produits à partir de localStorageProducts
+  let products = localStorageProducts.map(product => product.id)
+      // je mets les valeurs du formulaire et les produits sélectionnés dans un objet
+    const sendFormData = {
+      contact,
+      products,
+    }
+      fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        body:JSON.stringify(sendFormData) ,
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }) 
+    
+    // Ensuite on stock la réponse de l'api (orderId) :
+    .then((response) => {
+        return response.json();
+    })
+    
+
+    .then((server) => {
+        orderId = server.orderId;
+        // Si la variable orderId n'est pas une chaîne vide on redirige notre utilisateur sur la page confirmation avec la variable :
+        if (orderId != "") {
+            alert("Votre commande à était prise en compte");
+            location.href = "confirmation.html?id=" + orderId;
+        }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("Erreur lors de la commande. Veuillez réessayer !");
+    });
+}});
+
   
