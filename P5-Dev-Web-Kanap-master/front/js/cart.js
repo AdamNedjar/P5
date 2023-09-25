@@ -191,6 +191,17 @@ window.addEventListener('beforeunload', function () {
 });
 
 
+//Affichage informatif
+if(localStorageProducts === null){
+  //H1 informatif
+  const emptyCart = document.querySelector("h1")
+  emptyCart.textContent = "Votre panier est vide"
+  //Masquer le formulaire
+  const cartOrder = document.querySelector(".cart__order")
+  cartOrder.style.display = "none"
+}
+
+
 /////// Formulaire ///////
 
 // Sélection du bouton commander :
@@ -278,15 +289,6 @@ btnSendForm.addEventListener('click', (e) => {
     // Variable qui récupère l'orderId envoyé comme réponse par le serveur lors de la requête POST :
     var orderId = "";
 
-    // je mets les valeurs du formulaire et les produits sélectionnés
-    // dans un objet
-    const sendFormData = {
-      contact,
-      products,
-    }
-console.log(sendFormData);
-
-
     // Envoyer la requête POST au back-end
     function sendToServer() {
       // Construire le tableau de produits à partir de localStorageProducts
@@ -325,3 +327,4 @@ console.log(sendFormData);
 }});
 
   
+
