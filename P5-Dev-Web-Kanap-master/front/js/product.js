@@ -49,11 +49,7 @@ console.log(data)
 
      let colors = document.querySelector('#colors').value;
      let quantity = document.querySelector('#quantity').value;
-     let title = document.getElementById('title').innerHTML;
-     let price = document.getElementById('price').innerHTML;
-     let altTxt = document.getElementById("image").getAttribute('alt');
-     let imageUrl = document.getElementById("image").getAttribute('src');
-   
+     
      
      if(colors == ''){
            alert('Veuillez sélectionner une couleur');
@@ -71,11 +67,7 @@ console.log(data)
        const optionProduct = { 
          id: id,
          colors: colors,
-         quantity: Number(quantity),
-         title : title,
-         price : Number(price),
-         altTxt : altTxt, 
-         imageUrl : imageUrl
+         quantity: Number(quantity)
        }
 
        
@@ -130,6 +122,9 @@ console.log(data)
  
 
 getArticle()
+
+
+
 
 
 
