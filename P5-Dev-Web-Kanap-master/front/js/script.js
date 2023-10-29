@@ -22,5 +22,4 @@ const getArticles = () => {
 
 }
 
-
 getArticles()

@@ -16,7 +16,7 @@ async function fetchProductDetails(productId) {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Erreur lors de la récupération des détails du produit:', error);
+    console.error("Erreur lors de la récupération des détails du produit:", error);
     throw error;
   }
 }
@@ -27,7 +27,7 @@ async function displayCart(product) {
   // Appel à fetchProductDetails pour obtenir les informations manquantes
   const productDetails = await fetchProductDetails(product.id);
 
-  productList.innerHTML += `
+  productList.innerHTML = `
   <article class="cart__item" data-id="${product.id}" data-color="${product.colors}">
     <div class="cart__item__img">
       <img src="${productDetails.imageUrl}" alt="${productDetails.altTxt}">
@@ -49,15 +49,12 @@ async function displayCart(product) {
       </div>
     </div>
   </article>`;
-      
 
   updateCart();
   modifValue();
   saveCartData();
   addDeleteButtonsEventListeners();
 }
-
-
 
 // Déclaration d'une fonction pour calculer la quantité totale et le prix total
 async function updateCart() {
@@ -70,10 +67,13 @@ async function updateCart() {
     // Récupérez la quantité et le prix de l'article
     let quantityProduitDansLePanier = localStorageProducts[i].quantity;
 
-// Appel à fetchProductDetails pour obtenir les informations manquantes
-const productDetails = await fetchProductDetails(localStorageProducts[i].id);
+    // Appel à fetchProductDetails pour obtenir les informations manquantes
+    const productDetails = await fetchProductDetails(
+      localStorageProducts[i].id
+    );
 
-    let priceProduitDansLePanier = productDetails.price * localStorageProducts[i].quantity;
+    let priceProduitDansLePanier =
+      productDetails.price * localStorageProducts[i].quantity;
 
     // Ajoutez à la quantité et au prix totaux
     quantityTotalCalcul += parseInt(quantityProduitDansLePanier);
@@ -83,10 +83,6 @@ const productDetails = await fetchProductDetails(localStorageProducts[i].id);
   // Affichez les totaux sur la page
   document.querySelector(".cart__price").innerHTML = `<p>Total (<span id="totalQuantity">${quantityTotalCalcul}</span> articles) : <span id="totalPrice">${priceTotalCalcul.toFixed(2)} €</span></p>`;
 }
-
-
-
-
 
 // Déclaration d'une fonction pour modifier la quantité des articles
 function modifValue() {
@@ -120,13 +116,10 @@ function modifValue() {
   });
 }
 
-
-
 // Fonction de suppression des articles
 function deleteProduct(index) {
   // Supprimez l'article visuellement sur la page
-  const cartItem = document.querySelector(`.cart__item[data-id="${localStorageProducts[index].id}"][data-color="${localStorageProducts[index].colors}"]`);
-  cartItem.remove();
+  const cartItem = document.querySelector(`.cart__item[data-id="${localStorageProducts[index].id}"][data-color="${localStorageProducts[index].colors}"]`); cartItem.remove();
 
   // Supprimez l'article du tableau localStorageProducts
   localStorageProducts.splice(index, 1);
@@ -134,15 +127,14 @@ function deleteProduct(index) {
   saveCartData();
   addDeleteButtonsEventListeners(); // Ajout de cet appel pour réattacher les écouteurs d'événements
 }
-  // Mise à jour du local storage
-  localStorage.setItem("produits", JSON.stringify(localStorageProducts));
+// Mise à jour du local storage
+localStorage.setItem("produits", JSON.stringify(localStorageProducts));
 
-  // Mettez à jour le panier et les totaux sans recharger la page
-  updateCart();
+// Mettez à jour le panier et les totaux sans recharger la page
+updateCart();
 
-  // Sauvegardez instantanément les données du panier dans le localStorage
-  saveCartData();
-
+// Sauvegardez instantanément les données du panier dans le localStorage
+saveCartData();
 
 // Pour chaque bouton de suppression, ajoutez un écouteur d'événements pour appeler la fonction de suppression
 document.querySelectorAll(".deleteItem").forEach((button, index) => {
@@ -155,12 +147,6 @@ document.querySelectorAll(".deleteItem").forEach((button, index) => {
 updateCart();
 modifValue();
 
-
-
-
-
-
-
 // Fonction pour sauvegarder les données du panier dans le localStorage
 function saveCartData() {
   // Validez la quantité de chaque produit dans le panier
@@ -169,10 +155,6 @@ function saveCartData() {
   }
   localStorage.setItem("produits", JSON.stringify(localStorageProducts));
 }
-
-
-
-
 
 // Fonction pour charger les données du panier depuis le localStorage
 function loadCartData() {
@@ -187,26 +169,22 @@ function loadCartData() {
   }
 }
 
-  // Fonction pour ajouter des écouteurs d'événements pour les boutons de suppression
+// Fonction pour ajouter des écouteurs d'événements pour les boutons de suppression
 function addDeleteButtonsEventListeners() {
   const deleteButtons = document.querySelectorAll(".deleteItem");
 
   deleteButtons.forEach((button, index) => {
-    button.addEventListener("click", function() {
+    button.addEventListener("click", function () {
       deleteProduct(index);
+    });
   });
- });
 }
-
 
 // Événement lorsque la page est en cours de chargement
 document.addEventListener("DOMContentLoaded", function () {
   loadCartData(); // Chargez les données du panier depuis le localStorage
   addDeleteButtonsEventListeners(); // Ajoutez des écouteurs d'événements pour les nouveaux boutons de suppression
-
 });
-
-
 
 /////// Formulaire ///////
 
@@ -240,11 +218,7 @@ btnSendForm.addEventListener("click", (e) => {
   let errorMessages = [];
 
   function verifString(value, inputName, errorMsgItem) {
-    if (
-      /^([A-Za-zÀ-ÖØ-öø-ÿ\séè]{1,100})?([-]{0,1})?([A-Za-zÀ-ÖØ-öø-ÿ\séè]{1,100})$/.test(
-        value
-      )
-    ) {
+    if (/^([A-Za-zÀ-ÖØ-öø-ÿ\séè]{1,100})?([-]{0,1})?([A-Za-zÀ-ÖØ-öø-ÿ\séè]{1,100})$/.test(value)) {
       document.querySelector(errorMsgItem).textContent = "";
     } else {
       const errorMsg = `Le champ ${inputName} est invalide !`;
@@ -263,11 +237,7 @@ btnSendForm.addEventListener("click", (e) => {
 
   function verifAdresse() {
     const address = contact.address;
-    if (
-      /^([A-Za-zÀ-ÖØ-öø-ÿ0-9\séè]{1,100})?([-]{0,1})?([A-Za-zÀ-ÖØ-öø-ÿ0-9\séè]{1,100})$/.test(
-        address
-      )
-    ) {
+    if (/^([A-Za-zÀ-ÖØ-öø-ÿ0-9\séè]{1,100})?([-]{0,1})?([A-Za-zÀ-ÖØ-öø-ÿ0-9\séè]{1,100})$/.test(address)) {
       document.querySelector("#addressErrorMsg").textContent = "";
     } else {
       document.querySelector("#addressErrorMsg").textContent =
@@ -282,11 +252,7 @@ btnSendForm.addEventListener("click", (e) => {
 
   function verifEmail() {
     const email = contact.email;
-    if (
-      /^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/.test(
-        email
-      )
-    ) {
+    if (/^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/.test(email)) {
       document.querySelector("#emailErrorMsg").textContent = "";
     } else {
       document.querySelector("#emailErrorMsg").textContent =
