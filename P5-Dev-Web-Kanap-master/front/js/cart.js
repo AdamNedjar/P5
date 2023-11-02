@@ -27,7 +27,7 @@ async function displayCart(product) {
   // Appel à fetchProductDetails pour obtenir les informations manquantes
   const productDetails = await fetchProductDetails(product.id);
 
-  productList.innerHTML = `
+  productList.innerHTML += `
   <article class="cart__item" data-id="${product.id}" data-color="${product.colors}">
     <div class="cart__item__img">
       <img src="${productDetails.imageUrl}" alt="${productDetails.altTxt}">
